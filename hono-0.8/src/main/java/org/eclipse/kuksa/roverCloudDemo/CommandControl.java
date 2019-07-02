@@ -24,7 +24,7 @@ public class CommandControl implements ApplicationRunner {
 	@Autowired
 	private InfluxDBClient influxDB;
 
-	HashMap<String, String> hmap;
+	HashMap<String, Object> hmap;
 
 	private String honoTenantID;
 
@@ -42,7 +42,7 @@ public class CommandControl implements ApplicationRunner {
 		System.out.println(influxDB.getLatestTelemetryData(honoDeviceID).toString());
 
 		// Create a drive forward command as JSON and send it to the Rover
-		hmap = new HashMap<String, String>();
+		hmap = new HashMap<String, Object>();
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter command (Single char)");
@@ -52,7 +52,8 @@ public class CommandControl implements ApplicationRunner {
 			System.out.println("Enter speed (0-360)");
 			String speed = sc.nextLine();
 			if (!speed.isEmpty() && isInteger(speed)) {
-				hmap.put("speed", speed);
+				int speedInt= Integer.parseInt(speed);
+				hmap.put("speed", speedInt);
 
 				// Create CommandClient for sending Command to a specific device
 				final Future<HonoClient> clientFuture = this.honoConnector.connectToHono();
@@ -71,7 +72,7 @@ public class CommandControl implements ApplicationRunner {
 		}
 	}
 
-	private Buffer buildCommandPayload(HashMap<String, String> hmap) {
+	private Buffer buildCommandPayload(HashMap<String, Object> hmap) {
 		JsonObject jsonCmd = new JsonObject();
 		Set set = hmap.entrySet();
 		Iterator iterator = set.iterator();
